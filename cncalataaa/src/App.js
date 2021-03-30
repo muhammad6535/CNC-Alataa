@@ -1,11 +1,17 @@
 import "./App.css";
 import ImagePicker from "react-image-picker";
 import "react-image-picker/dist/index.css";
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 
 function App() {
   const [selectedSampleId, setSelectedSampleId] = useState(0);
   const [orderDetails, setOrderDetails] = useState([]);
+
+  let doorDelete = (index) => {
+    let x = [...orderDetails];
+    x.splice(index, 1);
+    setOrderDetails(x);
+  }
 
   return (
     <div className="App">
@@ -20,23 +26,15 @@ function App() {
             setOrderDetails([...orderDetails, newOrderDetails]);
           });
         }}
+
       >
         <div className="inputsContainer">
-          {JSON.stringify(orderDetails)}
           <label>width : </label>
-          <input className="doorDetails" id="width" placeHolder="width"></input>
+          <input className="doorDetails" id="width" type="number" min="0" placeholder="width" required></input>
           <label>height : </label>
-          <input
-            className="doorDetails"
-            id="height"
-            placeHolder="height"
-          ></input>
+          <input className="doorDetails" id="height" placeholder="height" type="number" min="0" required></input>
           <label>quantity : </label>
-          <input
-            className="doorDetails"
-            id="quantity"
-            placeHolder="quantity"
-          ></input>
+          <input className="doorDetails" onChange={(e) => e.target.value = Math.round(e.target.value)} id="quantity" placeholder="quantity" type="number" min="0" required></input>
           <label>sample types : </label>
 
           <ImagePicker
@@ -72,21 +70,51 @@ function App() {
               isSelected: i % 2 === 0,
               size: { height: 200, width: 200 },
             }))}
-            //
+
             onPick={(selectedImage) => {
               setSelectedSampleId(selectedImage.value);
-              console.log(selectedSampleId);
             }}
           />
 
           <button type="submit">add to list</button>
 
+
+          <table onChange={() => setOrderDetails(orderDetails)} id="ordersMeasurements" className="ordersMeasurements">
+            <tr className="doorMeasurements">
+              <th>Door number</th>
+              <th>Door style</th>
+              <th>Widh</th>
+              <th>Height</th>
+              <th>Quantity</th>
+              <th>Edit</th>
+            </tr>
+
+            {orderDetails.map((e, index) => {
+              return (
+                <tr className="doorRow">
+                  <td>{index + 1}</td>
+                  <td>{e.selectedSampleId}</td>
+                  <td>{e.width}</td>
+                  <td>{e.height}</td>
+                  <td>{e.quantity}</td>
+                  <td><button onClick={() => doorDelete(index)} type="button" className="delBut">Delete</button></td>      
+                </tr>
+
+              )
+            })
+            }
+          </table>
+
+
           <label>name : </label>
-          <input placeHolder="name"></input>
+          <input placeholder="name" required></input>
           <label>phone number : </label>
-          <input placeHolder="phone number" type="phone"></input>
+          <input placeholder="phone number" type="phone" minLength="9" maxLength="10" required></input>
           <label>user id : </label>
-          <input placeHolder="userId" type="number"></input>
+          <input placeholder="userId" type="phone" minLength="9" maxLength="9" required></input>
+
+          <label>Other details:</label>
+          <textarea className="otherDetails" rows="5" cols="50"></textarea>
         </div>
       </form>
     </div>
