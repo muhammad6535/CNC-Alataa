@@ -1,15 +1,27 @@
 import "./App.css";
 import ImagePicker from "react-image-picker";
 import "react-image-picker/dist/index.css";
-import React, { useState ,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 
 function App() {
   const [selectedSampleId, setSelectedSampleId] = useState(0);
   const [orderDetails, setOrderDetails] = useState([]);
+  const [rowToEditIndex, setRowToEditIndex] = useState(-1);
 
   let doorDelete = (index) => {
     let x = [...orderDetails];
     x.splice(index, 1);
+    setOrderDetails(x);
+  }
+
+  let doorEdit = (index, e) => {
+    setRowToEditIndex(index);
+    if(index == rowToEditIndex) {
+      setRowToEditIndex(-1);
+    }
+    
+    let x = [...orderDetails];
+    x[index] = e;
     setOrderDetails(x);
   }
 
@@ -78,7 +90,6 @@ function App() {
 
           <button type="submit">add to list</button>
 
-
           <table onChange={() => setOrderDetails(orderDetails)} id="ordersMeasurements" className="ordersMeasurements">
             <tr className="doorMeasurements">
               <th>Door number</th>
@@ -86,18 +97,24 @@ function App() {
               <th>Widh</th>
               <th>Height</th>
               <th>Quantity</th>
-              <th>Edit</th>
+              <th>Save</th>
+              <th>Delete</th>
             </tr>
 
             {orderDetails.map((e, index) => {
               return (
                 <tr className="doorRow">
                   <td>{index + 1}</td>
-                  <td>{e.selectedSampleId}</td>
-                  <td>{e.width}</td>
-                  <td>{e.height}</td>
-                  <td>{e.quantity}</td>
-                  <td><button onClick={() => doorDelete(index)} type="button" className="delBut">Delete</button></td>      
+                  <td>{rowToEditIndex === index? <input type="number" min="0" className="doorDetailsEdit" onChange={(newValue) => e.selectedSampleId = newValue.target.value} defaultValue={e.selectedSampleId}></input>:e.selectedSampleId}</td>
+                  <td>{rowToEditIndex === index? <input type="number" min="0" className="doorDetailsEdit" onChange={(newValue) => e.width = newValue.target.value} defaultValue={e.width}></input>:e.width}</td>
+                  <td>{rowToEditIndex === index? <input type="number" min="0" className="doorDetailsEdit" onChange={(newValue) => e.height = newValue.target.value} defaultValue={e.height}></input>:e.height}</td>
+                  <td>{rowToEditIndex === index? <input type="number" min="0" className="doorDetailsEdit" onChange={(newValue) => e.quantity = newValue.target.value} defaultValue={e.quantity}></input>:e.quantity}</td>
+                  <td>
+                    <button onClick={() => doorEdit(index, e)} type="button" className="editBut">{rowToEditIndex === index?"Save":"Edit"}</button>
+                  </td>
+                  <td>
+                    <button onClick={() => doorDelete(index)} type="button" className="delBut">Delete</button>
+                  </td>
                 </tr>
 
               )
